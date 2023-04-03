@@ -89,3 +89,4 @@ select:
               return id(state) != i;
           then:
             - button.press: selector
+            - delay: 400ms
