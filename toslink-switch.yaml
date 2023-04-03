@@ -8,7 +8,7 @@ esphome:
     - delay: 500ms
     - select.set_index:
         id: input
-        index: 0
+        index: 2
 
 esp32:
   board: az-delivery-devkit-v4
@@ -39,26 +39,6 @@ captive_portal:
 binary_sensor:
   - platform: gpio
     pin: 
-      number: 32
-      mode:
-        input: True
-        pulldown: True
-      inverted: True
-    id: input_red
-    on_press:
-      - lambda: |-
-          id(state) = 0;
-          ESP_LOGD("input_led_status", "pin 32, red");
-    on_release:
-      - delay: 40ms
-      - lambda: |-
-          if(!id(input_blue).state){
-            id(state)=1;
-            ESP_LOGD("input_led_status", "deduced other state");
-          }
-
-  - platform: gpio
-    pin: 
       number: 33
       mode:
         input: True
@@ -67,17 +47,8 @@ binary_sensor:
     id: input_blue
     on_press:
       - lambda: |-
-          id(state) = 2;
-          ESP_LOGD("input_led_status", "pin 33, blue");
-    on_release:
-      - delay: 40ms
-      - lambda: |-
-          if(!id(input_red).state){
-            id(state)=1;
-            ESP_LOGD("input_led_status", "deduced other state");
-          }
-
- 
+          id(state) = 0;
+          ESP_LOGD("input_led_status", "pin 33, blue"); 
 
 output: 
   - platform: gpio
@@ -93,6 +64,10 @@ button:
     name: "selector test"
     output: selector_gpio
     duration: 400ms
+    on_press:
+      - lambda: |-
+          id(state) += 1;
+          ESP_LOGD("pressed_button", "incremented state");
 
 globals:
   - id: state
@@ -104,9 +79,9 @@ select:
     name: Toslink Input
     optimistic: True
     options:
-      - PC
       - TV
       - Other
+      - PC
     on_value:
       - while: 
           condition:
@@ -114,4 +89,3 @@ select:
               return id(state) != i;
           then:
             - button.press: selector
-            - delay: 500ms
