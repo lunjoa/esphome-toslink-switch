@@ -4,11 +4,11 @@ esphome:
   on_boot:
     priority: -100
     then:
-    - button.press: selector
-    - delay: 500ms
+    - lambda: |-
+        id(state) = 1;
     - select.set_index:
         id: input
-        index: 2
+        index: 0
 
 esp32:
   board: az-delivery-devkit-v4
