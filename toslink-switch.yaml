@@ -44,11 +44,12 @@ binary_sensor:
         input: True
         pulldown: True
       inverted: True
-    id: input_blue
+    id: input_green
     on_press:
       - lambda: |-
+          delay(500);
           id(state) = 0;
-          ESP_LOGD("input_led_status", "pin 33, blue"); 
+          ESP_LOGD("input_led_status", "pin 33, Green"); 
 
 output: 
   - platform: gpio
@@ -79,9 +80,9 @@ select:
     name: Toslink Input
     optimistic: True
     options:
-      - TV
-      - Other
-      - PC
+      - 0 - Green
+      - 1 - Blue
+      - 2 - Red
     on_value:
       - while: 
           condition:
@@ -89,4 +90,4 @@ select:
               return id(state) != i;
           then:
             - button.press: selector
-            - delay: 400ms
+            - delay: 1000ms
